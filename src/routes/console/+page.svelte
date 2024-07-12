@@ -1,14 +1,26 @@
 <script lang="ts">
 	import { tick } from 'svelte';
 
-	let key = 'iloveendangeredanimals';
+	let key = '';
 	let consoleContent = 'Server console connected...</br>';
 
-	async function subscribe() {
+	async function subscribe(event: SubmitEvent) {
 		try {
+			const button = event.submitter as HTMLButtonElement
+
+			let body = {key: key, generate: true}
+
+			if (button.name == "generate") {
+				body = {key: key, generate: true}
+				consoleContent += "<br>Generate running...<br>"
+			}else if (button.name == "random") {
+				body = {key: key, generate: false}
+				consoleContent += "<br>Random DB selection running...<br>"
+			}
+
 			const response = await fetch('/api/generate', {
 				method: 'POST',
-				body: JSON.stringify({ key: key })
+				body: JSON.stringify(body)
 			});
 			const reader = response.body?.pipeThrough(new TextDecoderStream()).getReader();
 			while (true) {
@@ -16,7 +28,7 @@
 				if (book?.done) break;
 
 				let value = book?.value ?? '';
-				console.log(value);
+				//console.log(value);
 				if (value == `{"message":"Invalid Authorization"}`) {
 					value = "<span class='text-primary-500'>Authorization failed</span>\n";
 				}
@@ -55,7 +67,7 @@
 			<span class="text-primary-500 animate-gradient">hundreds in our database</span>!
 		</p>
 		<form
-			on:submit|preventDefault={() => subscribe()}
+			on:submit|preventDefault={subscribe}
 			class="flex flex-col justify-center items-center"
 		>
 			<input
@@ -65,10 +77,10 @@
 				placeholder="Enter console password"
 				class="input mt-3"
 			/>
-			<button type="submit" class="btn btn-md btn-disabled variant-filled-primary my-3"
+			<button type="submit" name="random" class="btn btn-md btn-disabled variant-filled-primary my-3"
 				>Select random from DB</button
 			>
-			<button type="submit" class="btn btn-md variant-filled-primary mb-3">Generate</button>
+			<button type="submit" name="generate" class="btn btn-md variant-filled-primary mb-3">Generate</button>
 		</form>
 		<div
 			bind:this={chat}

@@ -33,6 +33,27 @@ async function getSpeciesDetails(speciesName: string): Promise<any[]> {
 	return [detailsResponse.data.result[0], details2Response.data.result[0]];
 }
 
+let supportedExtensions = [
+	".apng",
+	".png",
+	".avif",
+	".gif",
+	".jpg",
+	".jpeg",
+	".jfif",
+	".pjpeg",
+	".pjp",
+	".svg",
+	".webp",
+	".bmp",
+	".ico",
+	".cur"
+];
+
+function checkExtension(url:string) {
+	return supportedExtensions.some(extension => url.endsWith(extension));
+}
+
 const gbifSearchUrl = 'https://api.gbif.org/v1/occurrence/search';
 async function getImageUrl(speciesName: string): Promise<string | null> {
 	const searchParams = {
@@ -48,7 +69,7 @@ async function getImageUrl(speciesName: string): Promise<string | null> {
 
 		if (searchData.results.length > 0) {
 			const occurrence = searchData.results[0];
-			if (occurrence.media && occurrence.media.length > 0) {
+			if (occurrence.media && occurrence.media.length > 0 && checkExtension(occurrence.media[0].identifier)) {
 				return occurrence.media[0].identifier || null;
 			}
 		}
@@ -203,3 +224,22 @@ export async function startProcessing(controller: ReadableStreamDefaultControlle
 	fs.writeFileSync('final.json', JSON.stringify(speciesDetailsList, null, 4));
 	controller.enqueue('\nDone finding 10 random RedList species');
 }
+
+export async function selectRandomFromDB(controller: ReadableStreamDefaultController) {
+	const start = Date.now();
+	await setAllRecordsCurrentToFalse()
+	controller.enqueue('\nSet all current species to false \n')
+	const records = await pb.collection(collectionName).getFullList({expand: 'scientific_name'});
+	controller.enqueue(`Fetched ${records.length} processed species from DB\n`)
+	
+	for (let i = 0; i < needed; i++) {
+		const index = Math.floor(Math.random() * records.length);
+		controller.enqueue(`Specie number ${i+1} selected: ${records[index]["scientific_name"]}\n`)
+		await pb.collection(collectionName).update(records[index].id, { current: true });
+	}
+	const elapsedTime = (Date.now() - start) / 1000;
+	controller.enqueue(`\nElapsed time: ${elapsedTime}s`)
+	controller.enqueue("\nDone selecting 10 random existing species in DB\n")
+}
+
+

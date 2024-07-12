@@ -1,16 +1,29 @@
 import type { RequestHandler } from './$types';
 import { env as envPrivate } from '$env/dynamic/private';
-import { startProcessing } from '$lib/process';
+import { selectRandomFromDB, startProcessing } from '$lib/process';
 
 export const POST: RequestHandler = async (event) => {
 	try {
 		let json = await event.request.json();
+		
+		if (json.generate == undefined || typeof json.generate != "boolean") {
+			return new Response(JSON.stringify({ message: 'Missing/improper generate field' }));
+		}else {
+			console.log()
+		}
+
 		if (json.key != envPrivate.generate) {
 			return new Response(JSON.stringify({ message: 'Invalid Authorization' }));
 		}
+
 		const readable = new ReadableStream({
 			async start(controller) {
-				await startProcessing(controller);
+				if (json.generate) {
+					await startProcessing(controller);
+				}else {
+					await selectRandomFromDB(controller);
+				}
+				controller.close()
 			}
 		});
 
