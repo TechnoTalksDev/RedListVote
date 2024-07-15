@@ -18,15 +18,56 @@
 		});
 		records = response.items;
 	}
-	onMount(() => {
-		fetchRecords();
-	});
 
 	let clientVoted = false;
+	let clientVotedTime = -1;
 
 	votedStore.subscribe(() => {
-		clientVoted = get(votedStore).yes;
+		const clientStore = get(votedStore)
+		clientVoted = clientStore.yes;
+		clientVotedTime = clientStore.time
 	});
+
+	
+	function checkTime() {	
+		const currentTime: number = Date.now()
+		// Function to get the start of the day in PST
+		const getStartOfDayPST = (timestamp: number): number => {
+				const date = new Date(timestamp);
+				const pstDate = new Intl.DateTimeFormat('en-US', {
+						timeZone: 'America/Los_Angeles',
+						year: 'numeric',
+						month: '2-digit',
+						day: '2-digit',
+						hour12: false,
+				}).formatToParts(date);
+
+				const year = parseInt(pstDate.find(part => part.type === 'year')!.value, 10);
+				const month = parseInt(pstDate.find(part => part.type === 'month')!.value, 10) - 1; // months are 0-indexed in JS Date
+				const day = parseInt(pstDate.find(part => part.type === 'day')!.value, 10);
+
+				return Date.UTC(year, month, day, 8, 0, 0); // 8:00 AM UTC is midnight PST
+		};
+
+		const lastVoteTime: number = getStartOfDayPST(clientVotedTime);
+		const startOfToday: number = getStartOfDayPST(currentTime);
+
+		const canVoteAgain: boolean = startOfToday > lastVoteTime;
+		return canVoteAgain
+	}
+
+	onMount(() => {
+		//console.log(clientVotedTime)
+		fetchRecords();
+		if (checkTime()) {
+			votedStore.set({
+				yes: false,
+				time: -1
+			})
+		}
+	});
+
+
 
 	async function incrementVotes(scientificName: string) {
 		try {

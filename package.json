@@ -22,6 +22,7 @@
 		"@tailwindcss/typography": "0.5.13",
 		"@types/eslint": "^8.56.0",
 		"@types/node": "20.14.10",
+		"@types/node-schedule": "^2.1.7",
 		"@typescript-eslint/eslint-plugin": "^7.0.0",
 		"@typescript-eslint/parser": "^7.0.0",
 		"autoprefixer": "10.4.19",
@@ -45,6 +46,7 @@
 		"@floating-ui/dom": "1.6.7",
 		"axios": "^1.7.2",
 		"lucide-svelte": "^0.407.0",
+		"node-schedule": "^2.1.1",
 		"pocketbase": "^0.21.3",
 		"svelte-persisted-store": "^0.11.0"
 	}

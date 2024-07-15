@@ -225,21 +225,30 @@ export async function startProcessing(controller: ReadableStreamDefaultControlle
 	controller.enqueue('\nDone finding 10 random RedList species');
 }
 
-export async function selectRandomFromDB(controller: ReadableStreamDefaultController) {
-	const start = Date.now();
-	await setAllRecordsCurrentToFalse()
-	controller.enqueue('\nSet all current species to false \n')
-	const records = await pb.collection(collectionName).getFullList({expand: 'scientific_name'});
-	controller.enqueue(`Fetched ${records.length} processed species from DB\n`)
-	
-	for (let i = 0; i < needed; i++) {
-		const index = Math.floor(Math.random() * records.length);
-		controller.enqueue(`Specie number ${i+1} selected: ${records[index]["scientific_name"]}\n`)
-		await pb.collection(collectionName).update(records[index].id, { current: true });
-	}
-	const elapsedTime = (Date.now() - start) / 1000;
-	controller.enqueue(`\nElapsed time: ${elapsedTime}s`)
-	controller.enqueue("\nDone selecting 10 random existing species in DB\n")
+
+export async function selectRandomFromDB(controller?: ReadableStreamDefaultController | undefined) {
+    const log = (message: string) => {
+        if (controller) {
+            controller.enqueue(message);
+        } else {
+            console.log(message);
+        }
+    };
+
+    const start = Date.now();
+    await setAllRecordsCurrentToFalse();
+    log('\nSet all current species to false \n');
+
+    const records = await pb.collection(collectionName).getFullList({ expand: 'scientific_name' });
+    log(`Fetched ${records.length} processed species from DB\n`);
+
+    for (let i = 0; i < needed; i++) {
+        const index = Math.floor(Math.random() * records.length);
+        log(`Specie number ${i + 1} selected: ${records[index]["scientific_name"]}\n`);
+        await pb.collection(collectionName).update(records[index].id, { current: true });
+    }
+
+    const elapsedTime = (Date.now() - start) / 1000;
+    log(`\nElapsed time: ${elapsedTime}s`);
+    log("\nDone selecting 10 random existing species in DB\n");
 }
-
-
