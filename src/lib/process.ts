@@ -9,6 +9,8 @@ const pocketBaseUrl = env.PUBLIC_POCKETBASE_URL;
 const collectionName = 'species';
 
 const pb = new PocketBase(pocketBaseUrl);
+const authData = pb.admins.authWithPassword('app@redlistvote.com', envPrivate.PB_PASS);
+
 // API endpoint for critically endangered species
 //const speciesListUrl = `https://apiv3.iucnredlist.org/api/v3/species/category/CR?token=${iucnApiKey}`;
 
@@ -146,6 +148,7 @@ export async function startProcessing(controller: ReadableStreamDefaultControlle
 
 	let randomSpecies: any[] = [];
 	let speciesDetailsList: any[] = [];
+
 	await setAllRecordsCurrentToFalse();
 	controller.enqueue('Set all current species to false \n');
 
@@ -156,13 +159,9 @@ export async function startProcessing(controller: ReadableStreamDefaultControlle
 		randomSpecies.push(fullJson[index]);
 	}
 
-	//const finalJson = JSON.parse(fs.readFileSync('final.json', 'utf-8'));
-	//speciesDetailsList = finalJson;
 
 	for (const specie of randomSpecies) {
-		//console.log(speciesDetailsList)
 		if (speciesDetailsList.length >= needed) break;
-		//console.log("this is running")
 		const details = await getSpeciesDetails(specie.scientific_name);
 
 		const speciesDetails = {

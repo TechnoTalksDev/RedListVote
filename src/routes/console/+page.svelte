@@ -18,7 +18,7 @@
 				consoleContent += "<br>Random DB selection running...<br>"
 			}
 
-			const response = await fetch('/api/generate', {
+			const response = await fetch('/generate', {
 				method: 'POST',
 				body: JSON.stringify(body)
 			});
