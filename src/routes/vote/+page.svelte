@@ -39,6 +39,7 @@
 		message: "You've already voted today! ✅",
 		// Provide any utility or variant background style:
 		background: 'variant-glass-success',
+		autohide: false,
 		timeout: 5000,
 	};
 

@@ -15,6 +15,13 @@
 	import { initializeStores, Toast } from '@skeletonlabs/skeleton';
 
 	initializeStores();
+
+  function signOut() {
+    console.log($pbStore.authStore.isValid)
+    $pbStore.authStore.clear()
+    console.log($pbStore.authStore.isValid)
+    console.log("signign out")
+  }
 </script>
 
 <Toast />
@@ -31,7 +38,11 @@
 				<a class="btn btn-sm variant-ghost-surface" href="/leaderboard" rel="noreferrer">
 					Leaderboard
 				</a>
-				<a class="btn btn-sm variant-ghost-surface" href="/login" rel="noreferrer"> Login </a>
+				{#if !$pbStore.authStore.isValid}
+					<a class="btn btn-sm variant-ghost-surface" href="/login" rel="noreferrer"> Login </a>
+				{:else}
+				<a class="btn btn-sm variant-ghost-surface" on:click={signOut} href="/" data-sveltekit-reload> Logout </a>
+				{/if}
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
