@@ -221,6 +221,8 @@
 						class="p-2 flex-1 overflow-auto max-w-[40rem]"
 						transition:slide={{ delay: 0, duration: 100, easing: quintOut, axis: 'x' }}
 					>
+						
+						
 						<p class="p">
 							<strong class="underline">Scientific name:</strong>
 							{specie.scientific_name}
@@ -245,6 +247,7 @@
 						</p>
 						<br />
 						<p><strong class="underline">Use/trade:</strong> {@html specie.usetrade}</p>
+						<a href="https://protect.worldwildlife.org/page/68470/donate/1?en_og_source=Web_Donation&ea.tracking.id=Web_Topnav&supporter.appealCode=AWE2402OQ18299A01179RX" target="_blank"><button class="btn variant-glass-primary">Donate</button></a>
 					</div>
 				{/if}
 			</div>
