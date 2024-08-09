@@ -13,6 +13,7 @@
 	pbStore.set(env.PUBLIC_POCKETBASE_URL);
 
 	import { initializeStores, Toast } from '@skeletonlabs/skeleton';
+	import Unami from '$lib/unami.svelte';
 
 	initializeStores();
 
@@ -23,6 +24,8 @@
     console.log("signign out")
   }
 </script>
+
+<Unami />
 
 <Toast />
 <!-- App Shell -->

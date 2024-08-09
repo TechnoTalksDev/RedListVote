@@ -212,6 +212,7 @@
 						<button
 							on:click={() => vote(specie.scientific_name)}
 							class="btn btn-sm variant-glass-primary absolute bottom-[9.6rem] left-[15.5rem] shadow-xl z-10"
+							data-umami-event="vote" data-umami-event-species="{specie.common_name}"
 							>Vote</button
 						>
 					{/if}

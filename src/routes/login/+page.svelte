@@ -141,8 +141,8 @@
           required
         />
         
-        <button type="submit" class="btn variant-filled-primary my-2" on:click={login}>Login</button>
-        <button class="btn variant-filled-surface mb-2" on:click={signUp}>Sign Up</button>
+        <button type="submit" class="btn variant-filled-primary my-2" on:click={login} data-umami-event="login" data-umami-event-email="{email}">Login</button>
+        <button class="btn variant-filled-surface mb-2" on:click={signUp} data-umami-event="signup" data-umami-event-email="{email}">Sign Up</button>
         <!-- svelte-ignore a11y-invalid-attribute -->
         <p class="text-center opacity-80 text-sm mt-2">Forgot your password? <a href="" class="underline" on:click={resetPassword}>Reset password</a></p>
         <!--
